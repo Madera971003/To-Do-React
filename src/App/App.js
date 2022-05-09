@@ -1,16 +1,27 @@
 import React from 'react'
 import { AppUI } from './AppUI';
 
-const defaultTodos = [
-  {text: 'Cortas cebolla', completed: false},
-  {text: 'Tomar un curso de React', completed: false},
-  {text: 'Hacer la tarea', completed: false},
-  {text: 'Alguna otra tarea', completed: false}
-];
+// const defaultTodos = [
+//   {text: 'Cortas cebolla', completed: false},
+//   {text: 'Tomar un curso de React', completed: false},
+//   {text: 'Hacer la tarea', completed: false},
+//   {text: 'Alguna otra tarea', completed: false}
+// ];
 
 function App() {
+  const localStorageTodos = localStorage.getItem('TODOS_V1');
+  let parsedTodos;
 
-  const [todos, setTodos] = React.useState(defaultTodos);
+  if(!localStorageTodos){
+    localStorage.setItem('TODOS_V1', JSON.stringify([]))
+    parsedTodos = [];
+  }else{
+    //Los datos se transforman con JSON ya que aun son solo string
+    parsedTodos = JSON.parse(localStorageTodos);
+  }
+
+
+  const [todos, setTodos] = React.useState(parsedTodos);
   const [searchValue, setSearchValue] = React.useState('');
 //La siguiente linea cuenta cuantos Todos han sido completados, una manera sencilla
 //de usar condicionales
@@ -32,6 +43,14 @@ function App() {
     });
   }
 
+  //Esta parte sirve para guardar los datos en local Storage; ya sea que se
+  //complete la tarea o que se elimine
+  const saveTodos = (newTodos) => {
+    const stringifiedTodos = JSON.stringify(newTodos);
+    localStorage.setItem('TODOS_V1', stringifiedTodos);
+    setTodos(newTodos);
+  };
+
   const completeTodo = (text) =>{
     //Lo siguiente recolecta la posicion en el array de la tarea con el mismo texto recibido
     const todoIndex = todos.findIndex(todo => todo.text === text);
@@ -44,7 +63,7 @@ function App() {
     //   text: todos[todoIndex].text,
     //   completed: true,
     // }
-    setTodos(newTodos);
+    saveTodos(newTodos);
   };
 
   const deleteTodo = (text) =>{
@@ -53,7 +72,7 @@ function App() {
     //Splice sirve para marcar una posicion y de alli en adelante cuantos datos eliminara
     //en este caso es en la posicion del todoIndex eliminando el UNICO dato cercano
     newTodos.splice(todoIndex, 1);
-    setTodos(newTodos);
+    saveTodos(newTodos);
   };
 
   return (
