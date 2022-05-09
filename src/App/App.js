@@ -8,23 +8,46 @@ import { AppUI } from './AppUI';
 //   {text: 'Alguna otra tarea', completed: false}
 // ];
 
-function App() {
-  const localStorageTodos = localStorage.getItem('TODOS_V1');
-  let parsedTodos;
+//Esto es un Custom Hook
+function useLocalStorage(itemName, initialValue){
 
-  if(!localStorageTodos){
-    localStorage.setItem('TODOS_V1', JSON.stringify([]))
-    parsedTodos = [];
+  //la version de TODOS_V1 fue cambiado a itemName
+  //Las palabras Todos por Item
+  const localStorageItem = localStorage.getItem(itemName);
+  let parsedItem;
+
+  if(!localStorageItem){
+    localStorage.setItem(itemName, JSON.stringify(initialValue))
+    parsedItem = initialValue;
   }else{
     //Los datos se transforman con JSON ya que aun son solo string
-    parsedTodos = JSON.parse(localStorageTodos);
+    parsedItem = JSON.parse(localStorageItem);
   }
 
+  const [item, setItem] = React.useState(parsedItem);
 
-  const [todos, setTodos] = React.useState(parsedTodos);
+  //Esta parte sirve para guardar los datos en local Storage; ya sea que se
+  //complete la tarea o que se elimine
+  const saveItem = (newItem) => {
+    const stringifiedItem = JSON.stringify(newItem);
+    localStorage.setItem(itemName, stringifiedItem);
+    setItem(newItem);
+  };
+
+  return [
+    item,
+    saveItem
+  ];
+
+}
+
+function App() {
+
+  const [todos, saveTodos] = useLocalStorage('TODOS_V1', []);
+
   const [searchValue, setSearchValue] = React.useState('');
-//La siguiente linea cuenta cuantos Todos han sido completados, una manera sencilla
-//de usar condicionales
+  //La siguiente linea cuenta cuantos Todos han sido completados, una manera sencilla
+  //de usar condicionales
   const completedTodos = todos.filter(todo => !!todo.completed).length;
   const totalTodos = todos.length;
 
@@ -43,14 +66,6 @@ function App() {
     });
   }
 
-  //Esta parte sirve para guardar los datos en local Storage; ya sea que se
-  //complete la tarea o que se elimine
-  const saveTodos = (newTodos) => {
-    const stringifiedTodos = JSON.stringify(newTodos);
-    localStorage.setItem('TODOS_V1', stringifiedTodos);
-    setTodos(newTodos);
-  };
-
   const completeTodo = (text) =>{
     //Lo siguiente recolecta la posicion en el array de la tarea con el mismo texto recibido
     const todoIndex = todos.findIndex(todo => todo.text === text);
@@ -65,6 +80,15 @@ function App() {
     // }
     saveTodos(newTodos);
   };
+  console.log("Render antes del Use Effect");
+
+  //Este React Hook se ejecutara hasta que se terminen todos los demas calculos internos
+  //Si como segundo argumento se le pone un [] vacio, se renderizara solo una vez
+  //El UseEffect renderizara solo cuando las variables en el array sufren un cambio
+  // React.useEffect(() => {
+  //   console.log("Use effect");
+  // }, [totalTodos]);
+  // console.log("Render luego del Use Effect");
 
   const deleteTodo = (text) =>{
     const todoIndex = todos.findIndex(todo => todo.text === text);
