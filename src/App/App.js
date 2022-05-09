@@ -10,40 +10,63 @@ import { AppUI } from './AppUI';
 
 //Esto es un Custom Hook
 function useLocalStorage(itemName, initialValue){
+  const [error, setError] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
+  const [item, setItem] = React.useState(initialValue);
 
-  //la version de TODOS_V1 fue cambiado a itemName
-  //Las palabras Todos por Item
-  const localStorageItem = localStorage.getItem(itemName);
-  let parsedItem;
+  React.useEffect(() => {
+    setTimeout(() => {
+      try{
+        //la version de TODOS_V1 fue cambiado a itemName
+        //Las palabras Todos por Item
+        const localStorageItem = localStorage.getItem(itemName);
+        let parsedItem;
 
-  if(!localStorageItem){
-    localStorage.setItem(itemName, JSON.stringify(initialValue))
-    parsedItem = initialValue;
-  }else{
-    //Los datos se transforman con JSON ya que aun son solo string
-    parsedItem = JSON.parse(localStorageItem);
-  }
-
-  const [item, setItem] = React.useState(parsedItem);
+        if(!localStorageItem){
+          localStorage.setItem(itemName, JSON.stringify(initialValue))
+          parsedItem = initialValue;
+        }else{
+          //Los datos se transforman con JSON ya que aun son solo string
+          parsedItem = JSON.parse(localStorageItem);
+        }
+        setItem(parsedItem);
+        setLoading(false);
+      }catch(error){
+        setError(error) //Tambien se puede mandar un true
+      }
+    }, 1000)
+  });
 
   //Esta parte sirve para guardar los datos en local Storage; ya sea que se
   //complete la tarea o que se elimine
   const saveItem = (newItem) => {
-    const stringifiedItem = JSON.stringify(newItem);
-    localStorage.setItem(itemName, stringifiedItem);
-    setItem(newItem);
+    try{
+      const stringifiedItem = JSON.stringify(newItem);
+      localStorage.setItem(itemName, stringifiedItem);
+      setItem(newItem);
+    }catch(error){
+      setError(error)
+    }
   };
-
-  return [
+  //Usar en el return {}, se toma en cuenta como sifuera un objeto
+  //Despues de dos retornos, se recomienda usar llaves
+  return {
     item,
-    saveItem
-  ];
+    saveItem,
+    loading,
+    error
+  };
 
 }
 
 function App() {
-
-  const [todos, saveTodos] = useLocalStorage('TODOS_V1', []);
+  //Los objetos se pueden renombrar para un mejor uso, asi como esta abajo
+  const {
+    item: todos,
+    saveItem: saveTodos,
+    loading,
+    error
+  } = useLocalStorage('TODOS_V1', []);
 
   const [searchValue, setSearchValue] = React.useState('');
   //La siguiente linea cuenta cuantos Todos han sido completados, una manera sencilla
@@ -80,15 +103,6 @@ function App() {
     // }
     saveTodos(newTodos);
   };
-  console.log("Render antes del Use Effect");
-
-  //Este React Hook se ejecutara hasta que se terminen todos los demas calculos internos
-  //Si como segundo argumento se le pone un [] vacio, se renderizara solo una vez
-  //El UseEffect renderizara solo cuando las variables en el array sufren un cambio
-  // React.useEffect(() => {
-  //   console.log("Use effect");
-  // }, [totalTodos]);
-  // console.log("Render luego del Use Effect");
 
   const deleteTodo = (text) =>{
     const todoIndex = todos.findIndex(todo => todo.text === text);
@@ -101,6 +115,8 @@ function App() {
 
   return (
     <AppUI
+      loading={loading}
+      error={error}
       totalTodos={totalTodos}
       completedTodos={completedTodos}
       searchValue={searchValue}
