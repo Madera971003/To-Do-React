@@ -15,6 +15,9 @@ function TodoProvider(props){
     } = useLocalStorage('TODOS_V1', []);
 
     const [searchValue, setSearchValue] = React.useState('');
+    //variable para conocer el estado de apertura del Modal
+    const [openModal, setOpenModal] = React.useState(false);
+
     //La siguiente linea cuenta cuantos Todos han sido completados, una manera sencilla
     //de usar condicionales
     const completedTodos = todos.filter(todo => !!todo.completed).length;
@@ -70,6 +73,8 @@ function TodoProvider(props){
             searchedTodos,
             completeTodo,
             deleteTodo,
+            openModal,
+            setOpenModal
         }}>
             {props.children}
         </TodoContext.Provider>

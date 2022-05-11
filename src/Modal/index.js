@@ -1,10 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import './Modal.css'
 
 function Modal({children}){
     return ReactDOM.createPortal(
-        children,
-        //Se llama el modal, este se modifico en el index.html de public con un nuevo id
+        <div className="ModalBackground">
+          {children}
+        </div>,
         document.getElementById('modal')
     );
 }

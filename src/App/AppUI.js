@@ -16,6 +16,8 @@ function AppUI(){
         searchedTodos,
         completeTodo,
         deleteTodo,
+        openModal,
+        setOpenModal,
         } = React.useContext(TodoContext);
     return(
         <React.Fragment> {/*Esto se usa para evitar el uso de "div"*/}
@@ -36,10 +38,16 @@ function AppUI(){
                     />
                 ))}
             </TodoList>
-            <Modal>
-                <p>Aquí se espera la teletransportación</p>
-            </Modal>
-            <CreateTodoButton />
+            {/**Condicional para saber si open modal en true o false */}
+            {openModal && (
+                <Modal>
+                    <p>Aquí se espera la teletransportación</p>
+                </Modal>
+            )}
+            <CreateTodoButton 
+                setOpenModal = {setOpenModal}
+                openModal = {openModal}
+            />
         </React.Fragment>
   );
 }
