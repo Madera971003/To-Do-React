@@ -1,22 +1,10 @@
 import React from 'react';
 import '../styles/TodoSearch.css';
+import { TodoContext } from '../TodoContext';
 
-// class Componente extends React.Component{ //Una forma de trabajar clases
-//   constructor(){
-//     this.state = {
-//       patito: 'Juan'
-//     };
-//   }
-  
-//   render(){
-//     return(
-//       <div onClick={() => this.setState('Enrique')}>{this.state.patito}</div>
-//     )
-//   }
-// }
+function TodoSearch() {
 
-function TodoSearch({searchValue, setSearchValue}) {
-
+  const {searchValue, setSearchValue} = React.useContext(TodoContext)
   const onSearchValueChange = (event) => {
     //console.log(event.target.value);
     setSearchValue(event.target.value);

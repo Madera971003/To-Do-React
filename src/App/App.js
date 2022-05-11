@@ -9,8 +9,6 @@ import { TodoProvider } from '../TodoContext';
 //   {text: 'Alguna otra tarea', completed: false}
 // ];
 
-
-
 function App() {
 
   return (
