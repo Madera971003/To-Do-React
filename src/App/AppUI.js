@@ -4,6 +4,7 @@ import { TodoCounter } from '../todoJS/TodoCounter';
 import { TodoSearch } from '../todoJS/TodoSearch';
 import { TodoList } from '../todoJS/TodoList';
 import { TodoItem } from '../todoJS/TodoItem';
+import { TodoForm } from '../TodoForm/Form';
 import { CreateTodoButton } from '../todoJS/CreateTodoButton';
 import { Modal } from '../Modal';
 
@@ -41,7 +42,7 @@ function AppUI(){
             {/**Condicional para saber si open modal en true o false */}
             {openModal && (
                 <Modal>
-                    <p>Aquí se espera la teletransportación</p>
+                    <TodoForm/>
                 </Modal>
             )}
             <CreateTodoButton 
