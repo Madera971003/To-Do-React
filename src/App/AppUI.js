@@ -7,6 +7,7 @@ import { TodoItem } from '../todoJS/TodoItem';
 import { TodoForm } from '../TodoForm/Form';
 import { CreateTodoButton } from '../todoJS/CreateTodoButton';
 import { Modal } from '../Modal';
+import './AppUI.css';
 
 
 function AppUI(){
@@ -26,9 +27,9 @@ function AppUI(){
             <TodoSearch/>
             <TodoList>
                 {/*Si loading u otra var es true, se pondra el parrafo*/}
-                {error && <p>Se ha producido un error con éxito :3 ...</p>}
-                {loading && <p>Cargando, espere un momento por favor...</p>}
-                {(!loading && !searchedTodos.lenght) && <p>¡Crea tu primer Tarea!</p>}
+                {error && <p className='app-text'>Se ha producido un error con éxito :3 ...</p>}
+                {loading && <p className='app-text'>Cargando, espere un momento por favor...</p>}
+                {(!loading && !searchedTodos.lenght) && <p className='app-text'>¡Crea tu primer Tarea!</p>}
                 {searchedTodos.map(todo =>(
                     <TodoItem
                     key={todo.text}
